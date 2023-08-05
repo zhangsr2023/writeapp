@@ -1,3 +1,18 @@
+
+# 软件阶段
+实验 -> Alpha -> Beta -> Release
+
+# 使用
+## 一、下载带有.exe可执行文件的压缩包（部分版本提供）
+> 标有 Pre-release 标签的为测试版
+
+可从 Release 找到对应版本
+## 二、下载源码
+1. 下载源码
+2. `pip install PyQt5`
+3. `pip install "PyQt-Fluent-Widgets[full]"`
+4. 进入软件目录
+5. `python main.py`
 # 错误代码
 
 | 错误代码  | 意思            | 基本解决方案                |
