@@ -21,7 +21,7 @@ user_log = logging.getLogger("user")
 # import easygui
 # 加载数据存储路径
 
-with open("data/info.json", "r") as f:
+with open("data/info.json", "r",encoding="utf-8") as f:
     data_path = json.load(f)["path"]
     if data_path[-1] == "\\" or data_path == "/":
         path = data_path + "StarGroup_data"

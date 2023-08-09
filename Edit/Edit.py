@@ -60,7 +60,7 @@ class MainWindow(QtWidgets.QMainWindow, EditUI.Ui_MainWindow):
         for i in range(1, 3):
             data_q = QTableWidgetItem(str(data[i]))
             self.tableWidget.setItem(self.row_count - 1, i - 1, data_q)
-        self.data.append(data)
+        # self.data.append(data)
         # 修改数据库里的数据
         conn = sqlite3.connect(self.data_path)
         cursor = conn.cursor()
@@ -70,6 +70,7 @@ class MainWindow(QtWidgets.QMainWindow, EditUI.Ui_MainWindow):
         print(self.data)
         cursor.execute("insert into word (id, l1, l2, important) values (?,?,?,?)",
                        (self.get_last_data_id() + 1, l1, l2, 3))
+        self.data.append(data)
         self.row_count += 1
         self.tableWidget.setRowCount(self.row_count)
         for i in range(self.row_count):

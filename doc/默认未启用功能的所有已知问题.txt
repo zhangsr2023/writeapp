@@ -1,1 +1,9 @@
 词库编辑-删除单词功能
+    1.在多次删除单词后在添加单词会导致软件崩溃 （已修复）
+        Python报错信息：
+            Traceback (most recent call last):
+                File "C:\Users\zhang\PycharmProjects\writeapp2\Edit\Edit.py", line 71, in add_data
+                    cursor.execute("insert into word (id, l1, l2, important) values (?,?,?,?)",
+            sqlite3.IntegrityError: UNIQUE constraint failed: word.id
+
+    2.在执行了删除操作后存储的信息与上一次关闭软件前界面显示的信息不符

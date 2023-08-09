@@ -48,9 +48,9 @@ class MainWindow(QtWidgets.QMainWindow, FramelessWindow, Ui_MainWindow):
             path = p + "\\StarGroup_data"
         if "StarGroup_data" not in os.listdir(p):
             os.mkdir(path)
-        with open("data/info.json", "r") as f:
+        with open("data/info.json", "r",encoding="utf-8") as f:
             data = json.load(f)
         data["path"] = p
-        with open("data/info.json", "w") as f:
+        with open("data/info.json", "w",encoding="utf-8") as f:
             json.dump(data, f)
         QMessageBox.information(None, "提示", "路径修改成功，手动重启后生效！")
