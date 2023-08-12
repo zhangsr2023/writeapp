@@ -22,7 +22,7 @@ class MainWindow(QtWidgets.QMainWindow, FramelessWindow, Ui_MainWindow):
         self.user = user
         self.data = data
         self.data_path = data_path
-        QMessageBox.warning(None,"提醒","设置路径时请小心\nBe careful when setting the path")
+        QMessageBox.warning(None, "提醒", "设置路径时请小心\nBe careful when setting the path")
         if self.user == None:
             self.setWindowTitle("设置-未登录")
         else:
@@ -30,7 +30,7 @@ class MainWindow(QtWidgets.QMainWindow, FramelessWindow, Ui_MainWindow):
         self.setup_ui()
 
     def setup_ui(self):
-        with open("data/info.json","r",encoding="utf-8") as f:
+        with open("data/info.json", "r", encoding="utf-8") as f:
             d = json.load(f)
             data_path = d["path"]
         self.lineEdit.setText(data_path)
@@ -48,9 +48,15 @@ class MainWindow(QtWidgets.QMainWindow, FramelessWindow, Ui_MainWindow):
             path = p + "\\StarGroup_data"
         if "StarGroup_data" not in os.listdir(p):
             os.mkdir(path)
-        with open("data/info.json", "r",encoding="utf-8") as f:
+        else:
+            if QMessageBox.warning(None, "",
+                                "当前路径下已经有了StarGroup_data文件夹，这是由软件创建的，但如果是你自己创建的文件夹，请点击点击否以免文件被覆盖的风险\n是否更改路径？",
+                                QMessageBox.Yes | QMessageBox.No) == QMessageBox.No:
+                return False
+
+        with open("data/info.json", "r", encoding="utf-8") as f:
             data = json.load(f)
         data["path"] = p
-        with open("data/info.json", "w",encoding="utf-8") as f:
+        with open("data/info.json", "w", encoding="utf-8") as f:
             json.dump(data, f)
         QMessageBox.information(None, "提示", "路径修改成功，手动重启后生效！")

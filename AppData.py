@@ -1,13 +1,13 @@
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import QMessageBox
-from AppDataUI import Ui_MainWindow_Add
+from AppDataUI import Ui_MainWindow
 import sqlite3
 
 
 # import json
 
 
-class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow_Add):
+class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self, file_data, user, parent=None):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
