@@ -3,7 +3,6 @@ import json
 from PyQt5 import QtWidgets, QtCore
 from PyQt5.QtWidgets import *
 from do import Ui_MainWindow
-import os
 from PyQt5.QtWidgets import QMessageBox
 from qframelesswindow import AcrylicWindow, StandardTitleBar, FramelessWindow
 from qfluentwidgets import setTheme, Theme
