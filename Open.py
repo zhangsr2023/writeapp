@@ -3,17 +3,18 @@ import OpenUI
 import os
 import sqlite3
 from PyQt5.QtWidgets import QMessageBox
-
-
+from qframelesswindow import AcrylicWindow,StandardTitleBar
 # import json
 
 
-class MainWindow(QtWidgets.QMainWindow, OpenUI.Ui_MainWindow):
+class MainWindow(AcrylicWindow, OpenUI.Ui_Form):
     def __init__(self, user, data_path, func_enable, parent=None):
         super(MainWindow, self).__init__(parent)
         self.data_path = data_path
         self.user = user
         self.setupUi(self)
+        self.setTitleBar(StandardTitleBar(self))
+        self.titleBar.raise_()
         self.setup_combo()  # 加载词库列表到界面
         self.pushButton.clicked.connect(self.open_database)
         self.func = func_enable

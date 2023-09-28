@@ -1,1 +1,8 @@
-{"experiment": {"Alpha function enable": false}, "info": {"version": "2.0"}}
+{
+  "experiment": {
+    "Alpha function enable": false
+  },
+  "info": {
+    "version": "2.0"
+  }
+}
