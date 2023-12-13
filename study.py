@@ -8,17 +8,21 @@ from qframelesswindow import AcrylicWindow, StandardTitleBar, FramelessWindow
 from qfluentwidgets import setTheme, Theme
 from PyQt5.QtWidgets import QMessageBox
 
+from time import strftime
+
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
-    def __init__(self, data, username, path, parent=None):
+    def __init__(self, data, username, path, user_info, is_func_enable,parent=None):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
         self.is_rest = False
         self.test_index = 0
         self.test_result = []
         self.user = username
+        self.user_info = user_info
         self.path = path
         self.data = data  # 接收计划数据
+        self.is_alpha_func_enable = is_func_enable
         self.setup_ui()
         setTheme(Theme.LIGHT)
         # if self.is_rest:
@@ -46,7 +50,6 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # data = QTableWidgetItem("test text")
             self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)  # 禁止用户编辑
             # self.tableWidget.setItem(0, 0, data)
-
             index = 0
             for i in self.a:
                 data = QTableWidgetItem(i[0])
@@ -74,13 +77,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                                         "题目：{}\n答案:{}".format(self.a[index][0], self.a[index][1]))
 
             QMessageBox.information(None, "提示", "检验结束，一共{}道错题".format(error_times))
+            if self.is_alpha_func_enable:
+                if strftime("%Y-%m-%d") in self.user_info["study history"]:
+                    cache0 = self.user_info["study history"][strftime("%Y-%m-%d")][0]
+                    self.user_info["study history"][strftime("%Y-%m-%d")] = [cache0 + self.row_count]
+                else:
+                    self.user_info["study history"][strftime("%Y-%m-%d")] = [self.row_count]
+                try:
+                    with open("{}/user/{}/info.json".format(self.path, self.user), "w", encoding="utf-8") as f:
+                        json.dump(self.user_info, f)
+                except Exception as e:
+                    QMessageBox.critical(None, "ERROR", str(e))
+                    QMessageBox.warning(None, "", "无法检测是什么错误，可能造成未知影响")
             with open("{}/user/{}/plan.json".format(self.path, self.user), "w", encoding="utf-8") as f:
                 current = self.data["days"]
                 self.data["days"] = current - 1
+
                 if current - 1 == 0:
                     self.data["info"] = 0
                     QMessageBox.information(None, "🎉", "恭喜你已经完成了本计划任务！")
                 json.dump(self.data, f)
+
 
         else:
             self.label_2.setText("题目：" + self.a[self.test_index][0])

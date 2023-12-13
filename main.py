@@ -12,7 +12,7 @@ import json
 import os
 import logging
 from qframelesswindow import AcrylicWindow, StandardTitleBar, FramelessWindow
-from qfluentwidgets import setTheme, Theme, FluentIcon
+from qfluentwidgets import setTheme, Theme, FluentIcon, SplitFluentWindow
 
 logging.basicConfig(level=logging.DEBUG, format="%(funcName)s %(asctime)s %(name)s %(levelname)s: %(message)s",
                     filename="logs/root.log")
@@ -21,7 +21,7 @@ user_log = logging.getLogger("user")
 # import easygui
 # 加载数据存储路径
 
-with open("data/info.json", "r",encoding="utf-8") as f:
+with open("data/info.json", "r", encoding="utf-8") as f:
     data_path = json.load(f)["path"]
     if data_path[-1] == "\\" or data_path == "/":
         path = data_path + "StarGroup_data"
@@ -99,10 +99,9 @@ class MainWindow(QtWidgets.QMainWindow, StandardTitleBar, Ui_MainWindow):
         # self.commandLinkButton_2.clicked.connect(self.setup_forget)
         self.set_geo()  # 设置样式
         QMessageBox.warning(None, "警告",
-                            "该项目主要目的为练习编程技术，目前版本可能会出现严重BUG。（特别提醒配置路径时需要小心）")
-        QMessageBox.warning(None, "",
-                            "The main purpose of this project is to practice programming techniques, and there may be serious bugs"
-                            " in the current version. (Special reminder to be careful when configuring paths)")
+                            "该项目主要目的为练习编程技术，目前版本可能会出现严重BUG。（特别提醒配置路径时需要小心）\n"
+                            "The main purpose of this project is to practice programming techniques, and there may"
+                            " be serious bugs in the current version. (Special reminder to be careful when configuring paths)")
         if data_path == "data\\StarGroup_data" or data_path == "data/StarGroup_data":
             QMessageBox.information(None, "警告",
                                     "你目前还没有设置数据存储路径，或者更新了软件，我们已经设置成了默认路径 软件目录/data 请在 设置-通用-软件数据存储路径 修改设置，否则下次升级后数据将会被覆盖！")
@@ -118,6 +117,8 @@ class MainWindow(QtWidgets.QMainWindow, StandardTitleBar, Ui_MainWindow):
         self.actionopen_2.setText("打开词库")
         self.actionopen_2.setEnabled(False)
         self.pushButton_4.setEnabled(False)
+        if not settings["experiment"]["Alpha function enable"]:
+            self.label_11.setText("功能未启用")
         self.commandLinkButton.setEnabled(False)
 
     def open(self, name):
@@ -144,7 +145,8 @@ class MainWindow(QtWidgets.QMainWindow, StandardTitleBar, Ui_MainWindow):
                 data = json.load(f)
                 if data["info"] == 0:
                     data = None
-            self.plan_window = plan.MainWindow(data, data_path, self.user)
+            self.plan_window = plan.MainWindow(data, data_path, self.user, self.user_info,
+                                               is_func_enable=settings["experiment"]["Alpha function enable"])
             self.plan_window.show()
 
         else:
@@ -163,6 +165,7 @@ class MainWindow(QtWidgets.QMainWindow, StandardTitleBar, Ui_MainWindow):
         try:
             with open("{}/user/{}/info.json".format(data_path, user_name), "r") as f:
                 data = json.load(f)
+                have_sh = True  # 是否是新版本数据 是否拥有 study history
                 if password == data["password"]:
                     self.user = user_name  # 更新登录状态
                     # 登录后允许用户使用以下功能
@@ -172,12 +175,26 @@ class MainWindow(QtWidgets.QMainWindow, StandardTitleBar, Ui_MainWindow):
                     self.pushButton_4.setEnabled(True)
                     self.commandLinkButton.setEnabled(True)
                     logging.info("登录操作")
+                    if "study history" in data:
+                        pass
+                    else:
+                        have_sh = False
+                    if not have_sh:
+                        data["study history"] = {}  # 为低版本升级上来的用户提供兼容支持
+                        with open("{}/user/{}/info.json".format(data_path, user_name), "w") as f1:
+                            json.dump(data, f1)
+                    if settings["experiment"]["Alpha function enable"]:
+                        if time.strftime("%Y-%m-%d") in data["study history"]:
+                            self.label_11.setText(
+                                "今日已背单词：" + str(data["study history"][time.strftime("%Y-%m-%d")][0]))
+                        else:
+                            self.label_11.setText("今日还没有背诵单词，快点击我的计划开始背诵吧")
+                    self.user_info = data
 
-                    QMessageBox.information(None, "提示", "登录成功！！！", QMessageBox.Ok)
+                    QMessageBox.information(None, "提示", "登录成功", QMessageBox.Ok)
                 else:
                     QMessageBox.information(None, "警告", "密码错误", QMessageBox.Ok)
                     user_log.warning("密码输入错误")
-
         except FileNotFoundError:
             QMessageBox.critical(None, "错误", "[0x3EA]用户名不存在或文件数据出现问题!", QMessageBox.Ok)
 

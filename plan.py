@@ -14,7 +14,7 @@ from qfluentwidgets import setTheme, Theme
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
-    def __init__(self, data, path, user, parent=None):
+    def __init__(self, data, path, user, user_info, is_func_enable, parent=None):
         super(MainWindow, self).__init__(parent)
         self.setupUi(self)
         # self.setTitleBar(StandardTitleBar(self))
@@ -22,9 +22,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         setTheme(Theme.LIGHT)
         self.data = data
+        self.user_info = user_info
         self.path = path
         self.user = user
         self.pushButton.clicked.connect(self.create_plan)
+        self.is_func_enable = is_func_enable
         self.setup_ui()  # 设置控件样式
 
     def setup_ui(self):
@@ -52,7 +54,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def do_task(self):
         print("do_task被调用")
         import study
-        self.add_window = study.MainWindow(self.data, self.user, self.path)
+        self.add_window = study.MainWindow(self.data, self.user, self.path, self.user_info,
+                                           is_func_enable=self.is_func_enable)
         self.add_window.show()
         if self.add_window.is_rest:
             self.add_window.close()  # 关闭窗口
